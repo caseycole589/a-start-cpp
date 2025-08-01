@@ -13,7 +13,7 @@ using std::vector;
 
 enum class State { kEmpty, kObstacle };
 
-vector<State> ParseLine(string line) {
+vector<State> ParseLine(const string &line) {
   istringstream sline(line);
   int n;
   char c;
@@ -29,7 +29,7 @@ vector<State> ParseLine(string line) {
   return row;
 }
 
-vector<vector<State>> ReadBoardFile(string path) {
+vector<vector<State>> ReadBoardFile(const string &path) {
   ifstream myfile(path);
   vector<vector<State>> board;
   if (myfile) {
@@ -61,8 +61,19 @@ void PrintBoard(const vector<vector<State>> &board) {
   }
 }
 
+vector<vector<State>> SearchBoard(const vector<vector<State>> &board,
+                                  int init[2], int goal[2]) {
+  vector<vector<State>> solution;
+  return solution;
+}
+
 int main() {
+  int init[2] = {0, 0};
+  int goal[2] = {4, 5};
+
   auto board = ReadBoardFile("1.board");
+  auto solution = SearchBoard(board, init, goal);
   PrintBoard(board);
+
   cout << "\n";
 }
