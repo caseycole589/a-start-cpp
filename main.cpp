@@ -62,6 +62,7 @@ void PrintBoard(const vector<vector<State>> &board) {
 }
 
 int main() {
-  cout << "hello world";
+  auto board = ReadBoardFile("1.board");
+  PrintBoard(board);
   cout << "\n";
 }
