@@ -12,7 +12,7 @@ using std::istringstream;
 using std::string;
 using std::vector;
 
-enum class State { kEmpty, kObstacle };
+enum class State { kEmpty, kObstacle, kClosed };
 
 vector<State> ParseLine(const string &line) {
   istringstream sline(line);
@@ -43,6 +43,7 @@ vector<vector<State>> ReadBoardFile(const string &path) {
   return board;
 }
 
+// just for printing out the board
 string CellString(State cell) {
   switch (cell) {
   case State::kObstacle:
@@ -62,15 +63,36 @@ void PrintBoard(const vector<vector<State>> &board) {
   }
 }
 
-int Heuristic(const int &x1, const int &y1, const int &x2, const int &y2) {
+// we want to compare f = g+h for these two nodes
+bool Compare(vector<int> &node1, vector<int> &node2) {
+  // f1 g+h > f2 g+h
+  return node1[2] + node1[3] > node2[2] + node2[3];
+}
+
+// distance
+int Heuristic(const int x1, const int y1, const int x2, const int y2) {
   int result = std::abs(x2 - x1) + std::abs(y2 - y1);
   return result;
 }
 
-vector<vector<State>> SearchBoard(const vector<vector<State>> &board,
-                                  int init[2], int goal[2]) {
-  vector<vector<State>> solution;
-  return solution;
+void AddToOpen(int x, int y, int g, int h, vector<vector<int>> &openList,
+               vector<vector<State>> &grid) {
+  vector<int> node{x, y, g, h};
+  openList.push_back(node);
+  grid[x][y] = State::kClosed;
+}
+
+vector<vector<State>> SearchBoard(vector<vector<State>> &grid, int init[2],
+                                  int goal[2]) {
+  vector<vector<int>> open{};
+
+  int x = init[0];
+  int y = init[1];
+  // initial cost
+  int g = 0;
+  int h = Heuristic(0, 0, goal[0], goal[1]);
+  AddToOpen(x, y, g, h, open, grid);
+  return vector<vector<State>>{};
 }
 
 int main() {
@@ -80,8 +102,7 @@ int main() {
   auto board = ReadBoardFile("1.board");
   auto solution = SearchBoard(board, init, goal);
   int an = Heuristic(1, 2, 3, 4);
-  cout << an;
-  // PrintBoard(board);
+  PrintBoard(board);
 
   cout << "\n";
 }
