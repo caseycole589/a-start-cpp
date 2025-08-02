@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -61,6 +62,11 @@ void PrintBoard(const vector<vector<State>> &board) {
   }
 }
 
+int Heuristic(const int &x1, const int &y1, const int &x2, const int &y2) {
+  int result = std::abs(x2 - x1) + std::abs(y2 - y1);
+  return result;
+}
+
 vector<vector<State>> SearchBoard(const vector<vector<State>> &board,
                                   int init[2], int goal[2]) {
   vector<vector<State>> solution;
@@ -73,7 +79,9 @@ int main() {
 
   auto board = ReadBoardFile("1.board");
   auto solution = SearchBoard(board, init, goal);
-  PrintBoard(board);
+  int an = Heuristic(1, 2, 3, 4);
+  cout << an;
+  // PrintBoard(board);
 
   cout << "\n";
 }
