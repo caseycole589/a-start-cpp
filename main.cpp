@@ -17,7 +17,7 @@ using std::vector;
 // directional deltas for testing
 const int delta[4][2]{{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
 
-enum class State { kEmpty, kObstacle, kClosed, kPath };
+enum class State { kEmpty, kObstacle, kClosed, kPath, kStart, kFinish };
 
 vector<State> ParseLine(const string &line) {
   istringstream sline(line);
@@ -55,6 +55,10 @@ string CellString(State cell) {
     return "⛰️   ";
   case State::kPath:
     return "🚗   ";
+  case State::kStart:
+    return "🚦   ";
+  case State::kFinish:
+    return "🏁   ";
   default:
     return "0   ";
   }
@@ -101,11 +105,9 @@ void ExpandNeighbors(const vector<int> &currentNode, int goal[2],
   int x = currentNode[0];
   int y = currentNode[1];
   int g = currentNode[2];
-  cout << "Expand Neighbors" << x << "," << y << "," << g << "\n";
   for (int i = 0; i < 4; i++) {
     int x2 = x + delta[i][0];
     int y2 = y + delta[i][1];
-    cout << "delta" << x2 << "," << y2 << "\n";
 
     if (CheckValidCell(x2, y2, grid)) {
       int g2 = g + 1;
@@ -124,11 +126,9 @@ vector<vector<State>> SearchBoard(vector<vector<State>> &grid, int init[2],
   // initial cost
   int g = 0;
   int h = Heuristic(0, 0, goal[0], goal[1]);
-  cout << "goal " << goal[0] << "," << goal[1] << "\n";
   AddToOpen(x, y, g, h, open, grid);
 
   while (!open.empty()) {
-    cout << "open not empty" << "\n";
     // sort the open list in a descending order to have the node with the lowest
     // h value at the end.
     CellSort(&open);
@@ -140,6 +140,8 @@ vector<vector<State>> SearchBoard(vector<vector<State>> &grid, int init[2],
 
     // if we reached the goal return the grid
     if (x == goal[0] && y == goal[1]) {
+      grid[init[0]][init[1]] = State::kStart;
+      grid[goal[0]][goal[1]] = State::kFinish;
       return grid;
     }
 
@@ -154,8 +156,8 @@ int main() {
   int init[2] = {0, 0};
   int goal[2] = {4, 5};
 
-  auto board = ReadBoardFile("1.board");
-  auto solution = SearchBoard(board, init, goal);
+  auto grid = ReadBoardFile("1.board");
+  auto solution = SearchBoard(grid, init, goal);
   PrintBoard(solution);
 
   cout << "\n";
